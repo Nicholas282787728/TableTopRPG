@@ -62,6 +62,8 @@ public class TileEditor extends SimpleApplication
         inputManager.addMapping("Select_Tile", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addListener(swingActionListener, "Select_Tile");
         
+
+        
         inputManager.addMapping("Move_Up", new KeyTrigger(KeyInput.KEY_UP));
         inputManager.addListener(swingActionListener, "Move_Up");
         
@@ -138,55 +140,5 @@ public class TileEditor extends SimpleApplication
             }
         });
     }
-    private ActionListener actionListener = new ActionListener()
-    {
-        public void onAction(String name, boolean pressed, float tpf)
-        {
-            
-            if (name.equals("Select_Tile") && pressed)
-            {
-                if (frameEditor != null)
-                {
-                    frameEditor.getPanel().selectTile(inputManager, frameEditor.getRow(), frameEditor.getFrame());
-                }
-            }
-        }
-    };
-    private AnalogListener analogListener = new AnalogListener()
-    {
-        public void onAnalog(String name, float keyPressed, float tpf)
-        {
-            if (name.equalsIgnoreCase("Move_Up"))
-            {
-                
-                frameEditor.getPanel().move(0, 10);
-                
-                
-            }
-            if (name.equalsIgnoreCase("Move_Down"))
-            {
-                
-                frameEditor.getPanel().move(0, -10);
-                
-                
-                
-            }
-            if (name.equalsIgnoreCase("Move_Left"))
-            {
-                
-                frameEditor.getPanel().move(-10, 0);
-                
-                
-                
-            }
-            if (name.equalsIgnoreCase("Move_Right"))
-            {
-                
-                frameEditor.getPanel().move(10, 0);
-                
-                
-                
-            }
-        }
-    };
+    
 }
