@@ -4,6 +4,7 @@
  */
 package TerrainEditor;
 
+import static TerrainEditor.TileEditor.DEV_MODE;
 import TerrainEditor.CustomFiles.TilesetData;
 import com.jme3.asset.AssetManager;
 import com.jme3.collision.CollisionResults;
@@ -58,7 +59,15 @@ public class TerrainPanel
 
     public TerrainPanel(int x_Tiles, int y_Tiles, String panel, AssetManager assetManager, TilesetData data)
     {
-        texture = assetManager.loadTexture(data.getImageLocation());
+        if(DEV_MODE)
+        {
+          //texture = assetManager.loadTexture(data.getImageName());
+          texture = assetManager.loadTexture(data.getImageName());
+        }
+        else
+        {
+          texture = assetManager.loadTexture(data.getImageLocation());
+        }
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         terrainNode = new Node(data.getName());
         for (int i = 0; i < x_Tiles; i++)
@@ -69,7 +78,7 @@ public class TerrainPanel
                 tile.initializeTextureCoordinates();
                 tile.move(data.getPixels() * i, data.getPixels() * j);
                 System.out.println(data.getDefaultFrame()+" " + data.getDefaultRow());
-                tile.setFrame(data.getDefaultFrame(), data.getDefaultRow());
+                tile.setFrame(data.getDefaultRow(),data.getDefaultFrame());
                 terrainNode.attachChild(tile.getNode());
 
 

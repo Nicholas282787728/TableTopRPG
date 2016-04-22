@@ -80,6 +80,7 @@ public class PanelTilesetView
        
         topPane.removeAll();
         topPane.setLayout(new GridLayout(0, data.getFrames()));
+        topPane.setPreferredSize(new Dimension(texture.getImage().getWidth(),texture.getImage().getHeight()));
         imageIcons = new ImageIcon[data.getRows()][data.getFrames()];
         
         for (int i = 0; i < data.getFrames(); i++)
@@ -97,8 +98,22 @@ public class PanelTilesetView
         }
 
         parentPanel.revalidate();
+        
+       
+    }
+    public Texture getTilesetTexture(AssetManager assetManager, String imageLocation)
+    {
+        return assetManager.loadTexture(imageLocation);
     }
 
+    public int getWidth()
+    {
+        return texture.getImage().getWidth(); 
+    }
+    public int getHeight()
+    {
+        return texture.getImage().getHeight();
+    }
     public ImageIcon getImage()
     {
         return imageIcons[row][data.getFrames() - 1 - frame];

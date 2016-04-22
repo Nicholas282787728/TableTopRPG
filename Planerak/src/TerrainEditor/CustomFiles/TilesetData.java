@@ -9,6 +9,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
+import com.jme3.texture.Texture;
 import java.io.IOException;
 import javax.swing.ImageIcon;
 
@@ -21,34 +22,27 @@ public class TilesetData implements Savable
 {
     String imageLocation = "TempImage";
     String tilesetName = "TempTile";
+    String imageName = "TempName";
     ImageIcon imageIcons[][] = null;
     ImageIcon defaultTile = null;
+    Texture tilesetTexture = null;
     int rows = 0;
     int frames = 0;
     int pixels = 0;
     int defaultRow = 0;
     int defaultFrame = 0;
+
     public TilesetData()
     {
+        
     }
 
-    public TilesetData(String location, String name, String rows, String frames, String pixels)
+    public TilesetData(String imageLocation,String imageName, String tilesetName, String rows, String frames, String pixels,int defaultFrame, int defaultRow)
     {
         
-        imageLocation = location;
-        tilesetName = name;
-        this.rows = Integer.parseInt(rows);
-        this.frames = Integer.parseInt(frames);
-        this.pixels = Integer.parseInt(pixels);
-        this.defaultFrame = 0;
-        this.defaultRow = 0;
-
-    }
-    public TilesetData(String location, String name, String rows, String frames, String pixels, int defaultRow, int defaultFrame)
-    {
-        
-        imageLocation = location;
-        tilesetName = name;
+        this.imageLocation = imageLocation;
+        this.imageName = imageName;
+        this.tilesetName = tilesetName;
         this.rows = Integer.parseInt(rows);
         this.frames = Integer.parseInt(frames);
         this.pixels = Integer.parseInt(pixels);
@@ -56,10 +50,15 @@ public class TilesetData implements Savable
         this.defaultRow = defaultRow;
 
     }
+
     
     public String getImageLocation()
     {
         return imageLocation;
+    }
+    public String getImageName()
+    {
+        return imageName;
     }
     public int getRows()
     {
@@ -89,6 +88,7 @@ public class TilesetData implements Savable
     {
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(imageLocation, "ImageLocation", "TempImage");
+        capsule.write(imageName, "ImageName", "TempName");
         capsule.write(tilesetName, "TilesetName", "TempTile");
         capsule.write(rows, "Rows", 32);
         capsule.write(frames, "Frames", 32);
@@ -101,6 +101,7 @@ public class TilesetData implements Savable
     {
         InputCapsule capsule = im.getCapsule(this);
         imageLocation = capsule.readString("ImageLocation", "TempImage");
+        imageName = capsule.readString("ImageName", "TempName");
         tilesetName = capsule.readString("TilesetName", "TempTile");
         rows = capsule.readInt("Rows", 32);
         frames = capsule.readInt("Frames", 32);

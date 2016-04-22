@@ -35,7 +35,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import jme3tools.converters.ImageToAwt;
-
+import static TerrainEditor.TileEditor.DEV_MODE;
+import com.jme3.texture.Texture;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -72,11 +75,12 @@ public class DialogNewTileset implements ActionListener
     JButton jButtonOK = new JButton();
     JButton jButtonCancel = new JButton();
     JButton jButtonDefault = new JButton();
+    JButton jButtonCalculate = new JButton();
     
     JButton jButtonOKView = new JButton();
     JButton jButtonCancelView = new JButton();
     
-    PanelTilesetView view;
+    PanelTilesetView panelTilesetView;
     
 
     private JLabel jLabelCurrent;
@@ -117,7 +121,6 @@ public class DialogNewTileset implements ActionListener
         jPanelNewTileset.add(jTextFieldImagePath, gridBagConstraints);
 
         jButtonBrowse.setText("Browse");
-
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
@@ -135,7 +138,7 @@ public class DialogNewTileset implements ActionListener
         gridBagConstraints.weightx = 0.25;
         jPanelNewTileset.add(jLabelTileSize, gridBagConstraints);
 
-        jTextFieldTileRows.setText("32");
+        jTextFieldTileRows.setText("0");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -143,8 +146,8 @@ public class DialogNewTileset implements ActionListener
         gridBagConstraints.insets = new Insets(0, 10, 0, 10);
         gridBagConstraints.weightx = 0.25;
         jPanelNewTileset.add(jTextFieldTileRows, gridBagConstraints);
-
-        jTextFieldTileFrames.setText("32");
+        
+        jTextFieldTileFrames.setText("0");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -153,6 +156,15 @@ public class DialogNewTileset implements ActionListener
         gridBagConstraints.weightx = 0.25;
         jPanelNewTileset.add(jTextFieldTileFrames, gridBagConstraints);
 
+        jButtonCalculate.setText("Calculate");
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(0, 5, 0, 10);
+        gridBagConstraints.weightx = 0.25;
+        jPanelNewTileset.add(jButtonCalculate, gridBagConstraints);
+                
         jLabelTilePixelSize.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabelTilePixelSize.setText("Tile Size (px): ");
         gridBagConstraints = new GridBagConstraints();
@@ -224,6 +236,7 @@ public class DialogNewTileset implements ActionListener
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new Insets(10, 10, 0, 10);
         jPanelNewTileset.add(jButtonOK, gridBagConstraints);
+        jButtonOK.setEnabled(false);
 
         jButtonCancel.setText("CANCEL");
 
@@ -264,7 +277,7 @@ public class DialogNewTileset implements ActionListener
         jLabelIcon = new JLabel();
 
         dialogSelectDefault.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        dialogSelectDefault.setPreferredSize(new Dimension(500, 500));
+        //dialogSelectDefault.setPreferredSize(new Dimension(500, 500));
         dialogSelectDefault.getContentPane().setLayout(new GridBagLayout());
         constraintsDefault = new GridBagConstraints();
         constraintsDefault.gridx = 0;
@@ -286,6 +299,7 @@ public class DialogNewTileset implements ActionListener
         constraintsDefault.gridy = 0;
         constraintsDefault.insets = new Insets(0, 10, 0, 10);
         jPanelButtons.add(jButtonOKView, constraintsDefault);
+        
 
         jButtonCancelView.setText("Cancel");
         constraintsDefault = new GridBagConstraints();
@@ -317,13 +331,13 @@ public class DialogNewTileset implements ActionListener
         constraintsDefault.insets = new Insets(0, 10, 10, 10);
         dialogSelectDefault.getContentPane().add(jPanelButtons, constraintsDefault);
 
-         view = new PanelTilesetView(this, jLabelIcon);   
+         panelTilesetView = new PanelTilesetView(this, jLabelIcon);   
         
         dialogSelectDefault.pack();
     }
     
     
-    public void initialize(boolean Visible,AssetManager assetmanager,String userTilesetPathRelative, String userTilesetPathFull)
+    public void initialize(boolean Visible,final AssetManager assetmanager,String userTilesetPathRelative, String userTilesetPathFull)
     {
         this.tilesetPathRelative = userTilesetPathRelative;
         this.assetmanager = assetmanager;
@@ -342,25 +356,80 @@ public class DialogNewTileset implements ActionListener
         
         jButtonDefault.setActionCommand("SELECT");
         jButtonDefault.addActionListener(this);
+        
+        jButtonCalculate.setActionCommand("CALCULATE");
+        jButtonCalculate.addActionListener(this);
+        
+        jTextFieldTileFrames.setEditable(false);
+        jTextFieldTileRows.setEditable(false);
              
         this.tilesetPathFull = userTilesetPathFull;
         fc = new JFileChooser(tilesetPathFull);
     }
-    
+    public void run()
+            {
+                
+                
+                
+            }
+    public static boolean isNumeric(String string)
+    {
+      return string.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
+    }
 
     public void actionPerformed(ActionEvent e)
     {
+        if("CALCULATE".equals(e.getActionCommand()))
+        {
+            String parse = jTextFieldTilePixelSize.getText();
+                int nPixels;
+                String path;
+                if(DEV_MODE)
+                {
+                     path = imageFile.getName();
+                }
+                else
+                {
+                    path = tilesetPathRelative + imageFile.getName();
+                }
+                if(isNumeric(parse))
+                {
+                    nPixels = Integer.parseInt(parse);
+                    Texture texture = panelTilesetView.getTilesetTexture(assetmanager, path);
+                    int i = texture.getImage().getWidth()/nPixels;
+                    int j = texture.getImage().getHeight()/nPixels;
+                    jTextFieldTileRows.setText(String.valueOf(i));
+                    jTextFieldTileFrames.setText(String.valueOf(j));
+                    jTextFieldTileFrames.setEditable(true);
+                    jTextFieldTileRows.setEditable(true);
+                }
+        }
         if("SELECT".equals(e.getActionCommand()))
         {
-            String path = tilesetPathRelative + imageFile.getName();
-            TilesetData data  = new TilesetData(path,jTextFieldTilesetName.getText(),jTextFieldTileRows.getText(),jTextFieldTileFrames.getText(),jTextFieldTilePixelSize.getText());
-            view.initializePallete(assetmanager, data);
+            String path;
+            if(DEV_MODE)
+            {
+                 path = imageFile.getName();
+            }
+            else
+            {
+                path = tilesetPathRelative + imageFile.getName();
+            }
+            
+            
+            TilesetData data  = new TilesetData(path,imageFile.getName(),jTextFieldTilesetName.getText(),jTextFieldTileRows.getText(),jTextFieldTileFrames.getText(),jTextFieldTilePixelSize.getText(),panelTilesetView.getFrame(),panelTilesetView.getRow());
+            panelTilesetView.initializePallete(assetmanager, data);
+            
+            dialogSelectDefault.setMaximumSize(new Dimension(panelTilesetView.getWidth(), panelTilesetView.getHeight()));
+            dialogSelectDefault.setPreferredSize(new Dimension(panelTilesetView.getWidth(), panelTilesetView.getHeight()));
+            
             dialogSelectDefault.setVisible(true);
-            jScrollPaneSelection.setViewportView(view.getParentPanel());
+            jScrollPaneSelection.setViewportView(panelTilesetView.getParentPanel());
         }
         if("OK_View".equals(e.getActionCommand()))
         {
-            jLabelTileImageIcon.setIcon(view.getImage());
+            jLabelTileImageIcon.setIcon(panelTilesetView.getImage());
+            
             dialogSelectDefault.dispose();
         }
         if (e.getActionCommand().startsWith("TileButton"))
@@ -370,23 +439,27 @@ public class DialogNewTileset implements ActionListener
             System.out.println("Frame"+temp[1] + "Row"+temp[0]);
             int selectedFrame = Integer.parseInt(temp[1]);
             int selectedRow = Integer.parseInt(temp[0]);
-            view.updateCurrentTileIcon(selectedRow,selectedFrame);
+            panelTilesetView.updateCurrentTileIcon(selectedRow,selectedFrame);
 
 
         }
-        if(e.getSource() == jButtonBrowse)
+        if("BROWSE".equals(e.getActionCommand()))
         {
-        int returnVal = fc.showOpenDialog(dialogNewTileset);
+            int returnVal = fc.showOpenDialog(dialogNewTileset);
 
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            imageFile = fc.getSelectedFile();
-            //This is where a real application would open the file.
-            System.out.println("Opening: " + imageFile.getName());
-            jTextFieldImagePath.setText(tilesetPathFull +"\\"+ imageFile.getName());
-            
-        } else {
-            System.out.println("Open command cancelled by user.");
-        }
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                imageFile = fc.getSelectedFile();
+                //This is where a real application would open the file.
+                System.out.println("Opening: " + imageFile.getName());
+                jTextFieldImagePath.setText(fc.getCurrentDirectory() +"\\"+ imageFile.getName());
+                jTextFieldTileFrames.setEditable(false);
+                jTextFieldTileRows.setEditable(false);
+                    jTextFieldTileFrames.setText("0");
+                    jTextFieldTileRows.setText("0");
+            } else 
+            {
+                System.out.println("Open command cancelled by user.");
+            }
         }
 
         if("OK".equals(e.getActionCommand()))
@@ -394,15 +467,29 @@ public class DialogNewTileset implements ActionListener
             if(imageFile != null)
             {
                 //String path = tilesetPath+"\\"+ imageFile.getName();
-                String path = tilesetPathRelative + imageFile.getName();
+                String path;
+                path = fc.getCurrentDirectory() +"\\" +imageFile.getName();
+                //path = tilesetPathRelative + imageFile.getName();
                 
-                TilesetData data  = new TilesetData(path,jTextFieldTilesetName.getText(),jTextFieldTileRows.getText(),jTextFieldTileFrames.getText(),jTextFieldTilePixelSize.getText(),view.getFrame(),view.getRow());
-                File temp = new File(tilesetPathFull+"\\Data\\"+jTextFieldTilesetName.getText()+".TileSet");
+                TilesetData data  = new TilesetData(path,imageFile.getName(),jTextFieldTilesetName.getText(),jTextFieldTileRows.getText(),jTextFieldTileFrames.getText(),jTextFieldTilePixelSize.getText(),panelTilesetView.getFrame(),panelTilesetView.getRow());
+                File TilesetFile;
+                if(DEV_MODE)
+                {
+                   TilesetFile = new File(tilesetPathFull+"\\"+jTextFieldTilesetName.getText()+".TileSet");
+
+                }
+                else
+                {
+                   TilesetFile = new File(tilesetPathFull+"\\Data\\"+jTextFieldTilesetName.getText()+".TileSet");
+
+                }
+                
+
                 BinaryExporter exporter = BinaryExporter.getInstance();
                 
                 try {
                     //data.write(exporter);
-                    exporter.save(data, temp);
+                    exporter.save(data, TilesetFile);
                   } catch (IOException ex) {
                     Logger.getLogger(DialogNewTileset.class.getName()).log(Level.SEVERE, "Error: Failed to save game!", ex);
                   }

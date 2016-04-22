@@ -4,6 +4,8 @@
  */
 package TerrainEditor.JavaFX;
 
+import TerrainEditor.EditorWindow.NewMapDialog.DialogNewMap_View;
+import TerrainEditor.EditorWindow.EditorWindowView;
 import TerrainEditor.CustomFiles.TilesetData;
 import TerrainEditor.TerrainPanel;
 import com.jme3.app.SimpleApplication;
@@ -22,9 +24,25 @@ import javax.swing.JFrame;
  */
 public class SwingActionListener implements ActionListener,com.jme3.input.controls.ActionListener,AnalogListener
 {
+
+    public void actionPerformed(ActionEvent e)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void onAction(String name, boolean isPressed, float tpf)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void onAnalog(String name, float value, float tpf)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    /*
     JFrame jFrame;
-    FrameEditor frameEditor;
-    DialogNewMap dialogNewMap;
+    EditorWindowView frameEditor;
+    DialogNewMap_View dialogNewMap;
     SimpleApplication simpleApplication;
     private TerrainPanel terrainPanel;
     private PanelWest panelWest;
@@ -42,7 +60,7 @@ public class SwingActionListener implements ActionListener,com.jme3.input.contro
         this.simpleApplication = simpleApplication;
     }
 
-    public void initialize(PanelWest panelWest,FrameEditor frameEditor)
+    public void initialize(PanelWest panelWest,EditorWindowView frameEditor)
     {
         this.panelWest = panelWest;
         this.frameEditor = frameEditor;
@@ -60,7 +78,7 @@ public class SwingActionListener implements ActionListener,com.jme3.input.contro
         {
             if(dialogNewMap == null)
             {
-                dialogNewMap = new DialogNewMap(frameEditor.getEditorWindow(),this);
+                dialogNewMap = new DialogNewMap_View(frameEditor.getEditorWindow(),this);
             }
             dialogNewMap.setVisible(true);
 
@@ -188,6 +206,6 @@ public class SwingActionListener implements ActionListener,com.jme3.input.contro
                 
                 
             }
-    }
+    }*/
     
 }
